@@ -4,7 +4,7 @@
   "description": "Diseño web Competencia Robotica UVMM",
   "main": "index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles",
+    "test": "jest --detectOpenHandles --runInBand",
     "start": "node index.js"
   },
   "keywords": [

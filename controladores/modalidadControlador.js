@@ -12,7 +12,7 @@ const modalidad_show = (req, res) => {
 */
 
 const create_post = (req,res) => {
-  var nombre = req.body.nombre
+  const nombre = req.body.nombre
   const modalidad = new Modalidad(nombre);
   if (req.session.modalidades)
     req.session.modalidades.push(modalidad)

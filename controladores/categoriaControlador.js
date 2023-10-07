@@ -5,9 +5,9 @@ const index = (req,res) => {
 }
 
 const create_post = (req,res) => {
-  const modalidadId = req.body.modalidadId
+  const modalidadId = Number(req.body.modalidadId)
   const nombre = req.body.nombre
-  const categoria = new Categoria(nombre);
+  const categoria = new Categoria(modalidadId, nombre);
   if (req.session.categorias)
     req.session.categorias.push(categoria)
   else
@@ -19,8 +19,22 @@ const create_get = (req,res) => {
   res.render('ingresarCategoria',{title:"Ingresar Categoria"})
 }
 
+const editar = (req,res) => {
+  const id = req.params.id
+  if(id != undefined){
+    req.session.categorias[id] = req.body;
+    req.session.categorias[id].modalidadId = Number(req.session.categorias[id].modalidadId);
+    res.status(200).json({message:"Categoria editada",categoria: req.session.categorias[id]})
+  }
+  else
+    res.status(300).json({error:"Falta id para modificar categoria"})
+
+
+}
+
 module.exports = {
   index,
   create_post,
-  create_get
+  create_get,
+  editar
 } 
