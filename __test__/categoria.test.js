@@ -22,3 +22,11 @@ describe("PUT /categorias/editar-categoria",()=>{
     expect(response.body.categoria).toEqual({modalidadId:0, nombre:"Lanzallamas"})
   })
 })
+
+describe("DELETE /categorias/eliminar-categoria",()=>{
+  it("deberia retornar de forma exitosa si se ha editado el nombre de la categoria dado un id de modalidad", async () => {
+    const response = await agent.delete("/categorias/eliminar-categoria/").type('form').send({categoriaId:0});
+    expect(response.status).toBe(200);
+    expect(response.body.categoria).toEqual({modalidadId:0, nombre:"Lanzallamas"})
+  })
+})
