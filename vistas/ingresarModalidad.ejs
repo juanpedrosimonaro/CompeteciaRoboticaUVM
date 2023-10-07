@@ -1,0 +1,17 @@
+<html lang="en">
+<%- include("./parciales/cabecera.ejs") %>
+
+<body>
+  <%- include("./parciales/barra.ejs") %>
+
+  <div class="crear-modalidad content">
+    <form action="/modalidades/ingresar-modalidad" method="POST">
+      <label for="nombre">Nombre modalidad:</label>
+      <input type="text" id="nombre" name="nombre" required>
+      <input type="submit" value="Subir">
+    </form>
+  </div>
+
+  <%- include("./parciales/fondo.ejs") %>
+</body>
+</html>
