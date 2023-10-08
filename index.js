@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const modalidadRutas = require('./rutas/modalidadRutas')
 const categoriaRutas = require('./rutas/categoriaRutas')
+const equipoRutas = require('./rutas/equipoRutas')
 
 // express app
 const app = express();
@@ -23,6 +24,7 @@ app.get('/', (req,res)=>{
 })
 app.use('/modalidades',modalidadRutas);
 app.use('/categorias',categoriaRutas);
+app.use('/equipos',equipoRutas);
 
 const server = app.listen(3000,()=>{
   console.log('Servidor iniciado en el puerto 3000')

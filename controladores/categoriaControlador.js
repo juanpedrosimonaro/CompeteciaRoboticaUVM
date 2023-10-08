@@ -1,7 +1,7 @@
 const Categoria = require('../modelos/categoria');
 
 const index = (req,res) => {
-  res.render('index', {categorias:req.session.modalidades});
+  res.render('index', {categorias:req.session.categorias});
 }
 
 const create_post = (req,res) => {
