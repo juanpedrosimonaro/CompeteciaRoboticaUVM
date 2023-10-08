@@ -27,7 +27,7 @@ const editar = (req,res) => {
     res.status(200).json({message:"Categoria editada",categoria: req.session.categorias[id]});
   }
   else
-    res.status(300).json({error:"Falta id para modificar categoria"});
+    res.status(400).json({error:"Falta id para modificar categoria"});
 
 }
 
@@ -37,7 +37,7 @@ const eliminar = (req,res) => {
   if (catEliminado)
     res.status(200).json({message:"Categoria eliminada",categoria:catEliminado})
   else
-    res.status(300).json({message:"Error la categoria no pudo ser eliminda"})
+    res.status(400).json({message:"Error la categoria no pudo ser eliminda"})
 }
 
 module.exports = {

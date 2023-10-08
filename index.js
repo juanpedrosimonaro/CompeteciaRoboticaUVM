@@ -3,6 +3,7 @@ const session = require('express-session');
 const modalidadRutas = require('./rutas/modalidadRutas')
 const categoriaRutas = require('./rutas/categoriaRutas')
 const equipoRutas = require('./rutas/equipoRutas')
+const patrocinadorRutas = require('./rutas/patrocinadorRutas')
 
 // express app
 const app = express();
@@ -25,6 +26,7 @@ app.get('/', (req,res)=>{
 app.use('/modalidades',modalidadRutas);
 app.use('/categorias',categoriaRutas);
 app.use('/equipos',equipoRutas);
+app.use('/patrocinadores',patrocinadorRutas);
 
 const server = app.listen(3000,()=>{
   console.log('Servidor iniciado en el puerto 3000')
