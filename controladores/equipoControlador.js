@@ -13,7 +13,7 @@ const create_post = (req,res) => {
     req.session.equipos.push(equipo);
   else
     req.session.equipos = [equipo];
- 
+
   res.status(200).json({message:"Equipo Creado",equipos:req.session.equipos});
 }
 
@@ -29,7 +29,7 @@ const editar = (req,res) => {
     res.status(200).json({message:"Equipo editado",equipo: req.session.equipos[id]});
   }
   else
-    res.status(300).json({error:"Falta id para modificar el equipo"});
+    res.status(400).json({error:"Falta id para modificar el equipo"});
 
 }
 
@@ -39,7 +39,7 @@ const eliminar = (req,res) => {
   if (eqEliminado)
     res.status(200).json({message:"Equipo eliminado",equipo:eqEliminado});
   else
-    res.status(300).json({message:"Error el equipo no pudo ser elimindo"});
+    res.status(400).json({message:"Error el equipo no pudo ser elimindo"});
 }
 
 const mostrarTodos = (req,res) =>{
@@ -60,6 +60,19 @@ const mostrarPorCategoria = (req,res) => {
   res.status(200).json({equiposPorCategoria});
 }
 
+const eliminarCategoriaDeEquipo = (req,res) => {
+  const eqId = Number(req.body.eqId);
+  const catId = Number(req.body.catId);
+  const equipo = req.session.equipos[eqId];
+  const posCat = equipo.catIns.indexOf(catId);
+  if (posCat != -1){
+    const idEliminado = equipo.catIns.splice(posCat,1)[0];
+    res.status(200).json({catEliminado:idEliminado});
+  }
+  else
+    res.status(400).json({message:"No se encontro la categoria inscrita en el equipo"});
+}
+
 module.exports = {
   index,
   create_post,
@@ -67,5 +80,6 @@ module.exports = {
   editar,
   eliminar,
   mostrarTodos,
-  mostrarPorCategoria
+  mostrarPorCategoria,
+  eliminarCategoriaDeEquipo
 } 

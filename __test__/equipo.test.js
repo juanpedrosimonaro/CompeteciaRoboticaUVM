@@ -51,6 +51,15 @@ describe("GET /equipos/equiposPorCategoria",()=>{
     const response3 = await agent.post("/categorias/ingresar-categoria").type('form').send({modalidadId:1, nombre:"Busqueda"});
     expect(response3.status).toBe(200);
     const response = await agent.get("/equipos/equiposPorCategoria");
+    expect(response.status).toBe(200);
     expect(response.body.equiposPorCategoria).toEqual([{nombre:"Acido",equipos:[{nombre:"Roboticos", integrantes:["18379420","23084755","25409410"], catIns:[0,1]}]},{nombre:"Lanzallamas",equipos:[{nombre:"Roboticos", integrantes:["18379420","23084755","25409410"], catIns:[0,1]}]},{nombre:"Busqueda",equipos:[{nombre:"Cortocircuitos", integrantes:["19475603","28461305","29406561"], catIns:[2]}]}]);
+  })
+})
+
+describe("DELETE /equipos/eliminarCategoriaDeEquipo",()=>{
+  it("deberia eliminar la categoria del equipo", async () => {
+    const response = await agent.delete("/equipos/eliminarCategoriaDeEquipo").type('form').send({eqId:0,catId:1});
+    expect(response.status).toBe(200);
+    expect(response.body.catEliminado).toBe(1);
   })
 })
