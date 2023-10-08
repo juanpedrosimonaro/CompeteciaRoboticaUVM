@@ -37,9 +37,27 @@ const eliminar = (req,res) => {
   const id = Number(req.body.equipoId);
   const eqEliminado = req.session.equipos.splice(id,1)[0];
   if (eqEliminado)
-    res.status(200).json({message:"Equipo eliminado",equipo:eqEliminado})
+    res.status(200).json({message:"Equipo eliminado",equipo:eqEliminado});
   else
-    res.status(300).json({message:"Error el equipo no pudo ser elimindo"})
+    res.status(300).json({message:"Error el equipo no pudo ser elimindo"});
+}
+
+const mostrarTodos = (req,res) =>{
+  res.status(200).json({equipos:req.session.equipos});
+}
+
+const mostrarPorCategoria = (req,res) => {
+  const categorias = req.session.categorias;
+  const canCat = categorias.length - 1;
+  const equipos = req.session.equipos;
+  var equiposPorCategoria = [];
+  for(let i=0;i<=canCat;i++){
+    equiposPorCategoria.push({
+      nombre:categorias[i].nombre,
+      equipos:equipos.filter((eq)=>eq.catIns.includes(i))
+    });
+  }
+  res.status(200).json({equiposPorCategoria});
 }
 
 module.exports = {
@@ -47,5 +65,7 @@ module.exports = {
   create_post,
   create_get,
   editar,
-  eliminar
+  eliminar,
+  mostrarTodos,
+  mostrarPorCategoria
 } 
