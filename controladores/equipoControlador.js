@@ -25,7 +25,7 @@ const editar = (req,res) => {
   const id = req.params.id;
   if(id != undefined){
     req.session.equipos[id] = req.body;
-    //req.session.equipos[id].modalidadId = Number(req.session.equipos[id].modalidadId);
+    req.session.equipos[id].catIns = req.session.equipos[id].catIns.map((cat)=>Number(cat))
     res.status(200).json({message:"Equipo editado",equipo: req.session.equipos[id]});
   }
   else

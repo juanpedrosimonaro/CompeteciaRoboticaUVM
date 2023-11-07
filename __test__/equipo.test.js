@@ -15,12 +15,11 @@ describe("POST /equipos/ingresar-equipo",()=>{
   })
 })
 
-/*
 describe("PUT /equipos/editar-equipo",()=>{
   it("deberia retornar de forma exitosa si se ha editado el nombre de la equipo dado un id de modalidad", async () => {
-    const response = await agent.put("/equipos/editar-equipo/0").type('form').send({modalidadId:0, nombre:"Lanzallamas"});
+    const response = await agent.put("/equipos/editar-equipo/0").type('form').send({nombre:"Cortocircuitos", integrantes:["19475603","28461305","29406561"], catIns:[0,2,3]});
     expect(response.status).toBe(200);
-    expect(response.body.equipo).toEqual({modalidadId:0, nombre:"Lanzallamas"})
+    expect(response.body.equipo).toEqual({nombre:"Cortocircuitos", integrantes:["19475603","28461305","29406561"], catIns:[0,2,3]})
   })
 })
 
@@ -28,7 +27,6 @@ describe("DELETE /equipos/eliminar-equipo",()=>{
   it("deberia retornar de forma exitosa si se ha editado el nombre de la equipo dado un id de modalidad", async () => {
     const response = await agent.delete("/equipos/eliminar-equipo/").type('form').send({equipoId:0});
     expect(response.status).toBe(200);
-    expect(response.body.equipo).toEqual({modalidadId:0, nombre:"Lanzallamas"})
+    expect(response.body.equipo).toEqual({nombre:"Cortocircuitos", integrantes:["19475603","28461305","29406561"], catIns:[0,2,3]})
   })
 })
-*/

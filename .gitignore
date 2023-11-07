@@ -1,6 +1,6 @@
 TODO.md
 dataAccount.txt
 node_modules
-*.swp
-*.swo
+*.sw?
+#*.swo
 *~
