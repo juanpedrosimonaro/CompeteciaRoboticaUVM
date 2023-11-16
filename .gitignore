@@ -2,5 +2,5 @@ TODO.md
 dataAccount.txt
 node_modules
 *.sw?
-#*.swo
 *~
+.env

@@ -1,5 +1,5 @@
 const express = require('express');
-const session = require('express-session');
+// const session = require('express-session');
 const modalidadRutas = require('./rutas/modalidadRutas')
 const categoriaRutas = require('./rutas/categoriaRutas')
 const equipoRutas = require('./rutas/equipoRutas')
@@ -13,11 +13,11 @@ app.set('view engine', 'ejs');
 // middleware
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
-app.use(session({
-  secret: 'millavesecreta',
-  resave: false,
-  saveUnitialized: true
-}));
+// app.use(session({
+//   secret: 'millavesecreta',
+//   resave: false,
+//   saveUnitialized: true
+// }));
 
 // rutas
 app.get('/', (req,res)=>{
