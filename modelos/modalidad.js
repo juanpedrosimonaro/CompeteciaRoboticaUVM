@@ -16,7 +16,7 @@ Modalidad.init({
 },{ sequelize });
 
 Modalidad.asociarCategoria = (Categoria) =>{
-  Modalidad.hasMany(Categoria);
+  Modalidad.hasMany(Categoria,{foreignKey:{allowNull:false},onDelete:'cascade'});
 }
 
 module.exports = Modalidad

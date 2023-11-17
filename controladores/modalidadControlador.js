@@ -17,13 +17,6 @@ const create_post = async (req,res) => {
   Modalidad.create({ nombre })
   .then((modalidad)=>res.status(200).json({ modalidad }))
   .catch((error)=>res.status(300).json({ error }))
-/*   const nombre = req.body.nombre
-  const modalidad = new Modalidad(nombre);
-  if (req.session.modalidades)
-    req.session.modalidades.push(modalidad)
-  else
-    req.session.modalidades = [modalidad]
-  res.status(200).json({message:"Modalidad Creada",modalidades:req.session.modalidades}) */
 }
 
 const create_get = (req,res) => {

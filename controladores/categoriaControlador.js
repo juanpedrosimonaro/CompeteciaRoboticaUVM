@@ -1,43 +1,63 @@
-const Categoria = require('../modelos/categoria');
+const seqSync = require('../modelos/asociador');
 
 const index = (req,res) => {
   res.render('index', {categorias:req.session.categorias});
 }
 
-const create_post = (req,res) => {
+const create_post = async (req,res) => {
   const modalidadId = Number(req.body.modalidadId);
   const nombre = req.body.nombre;
-  const categoria = new Categoria(modalidadId, nombre);
-  if (req.session.categorias)
-    req.session.categorias.push(categoria);
-  else
-    req.session.categorias = [categoria];
-  res.status(200).json({message:"Categoria Creada",categorias:req.session.categorias});
+
+  try{
+    const { Modalidad, Categoria } = await seqSync;
+    const modalidad = await Modalidad.findByPk(modalidadId);
+    const categoria = Categoria.build({ nombre });
+    categoria.setModalidad(modalidad,{save:false});
+    await categoria.save();
+    res.status(200).json({categoria});
+  }
+  catch(error){
+    console.error(error)
+    res.status(300).json(error);
+  }
 }
 
 const create_get = (req,res) => {
   res.render('ingresarCategoria',{title:"Ingresar Categoria"});
 }
 
-const editar = (req,res) => {
+const editar = async (req,res) => {
   const id = req.params.id;
-  if(id != undefined){
-    req.session.categorias[id] = req.body;
-    req.session.categorias[id].modalidadId = Number(req.session.categorias[id].modalidadId);
-    res.status(200).json({message:"Categoria editada",categoria: req.session.categorias[id]});
+  const nombre = req.body.nombre;
+  const modalidadId = req.body.modalidadId;
+  try{
+    const { Modalidad, Categoria } = await seqSync;
+    const categoria = await Categoria.findByPk(id);
+    const modalidad = await Modalidad.findByPk(modalidadId);
+    categoria.nombre = nombre;
+    categoria.setModalidad(modalidad,{save:false});
+    await categoria.save();
+    res.status(200).json({categoria});
   }
-  else
-    res.status(400).json({error:"Falta id para modificar categoria"});
+  catch(error){
+    res.status(300).json(error);
+  }
 
 }
 
-const eliminar = (req,res) => {
+const eliminar = async (req,res) => {
   const id = Number(req.body.categoriaId);
-  const catEliminado = req.session.categorias.splice(id,1)[0];
-  if (catEliminado)
-    res.status(200).json({message:"Categoria eliminada",categoria:catEliminado})
-  else
-    res.status(400).json({message:"Error la categoria no pudo ser eliminda"})
+  try{
+    const { Categoria } = await seqSync;
+    const categoria = await Categoria.findByPk(id);
+    await categoria.destroy();
+    res.status(200).json({eliminado:true});
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
+
 }
 
 module.exports = {
