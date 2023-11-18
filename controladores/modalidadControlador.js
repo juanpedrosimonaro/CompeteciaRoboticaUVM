@@ -19,6 +19,22 @@ const create_post = async (req,res) => {
   .catch((error)=>res.status(300).json({ error }))
 }
 
+const editar = async (req,res) => {
+  const id = req.params.id;
+  const nombre = req.body.nombre;
+  try{
+    const { Modalidad } = await seqSync;
+    const modalidad = await Modalidad.findByPk(id);
+    modalidad.nombre = nombre;
+    modalidad.save();
+    res.status(200).json({ modalidad });
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json({ error })
+  }
+}
+
 const create_get = (req,res) => {
   res.render('ingresarModalidad',{title:"Ingresar Modalidad"})
 }
@@ -26,5 +42,6 @@ const create_get = (req,res) => {
 module.exports = {
   index,
   create_post,
-  create_get
+  create_get,
+  editar
 } 
