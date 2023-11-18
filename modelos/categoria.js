@@ -20,7 +20,7 @@ Categoria.asociarModalidad = (Modalidad) =>{
 }
 
 Categoria.asociarEquipo = (Equipo) =>{
-  Categoria.belongsToMany(Equipo, { through: "Categoria_Equipo" } );
+  Categoria.belongsToMany(Equipo, { through: "Categoria_Equipo", onDelete:'cascade'/*, as:{singular:'equipo',plural:'equipos'}*/} );
 }
 
 module.exports = Categoria

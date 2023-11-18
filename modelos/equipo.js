@@ -16,15 +16,15 @@ Equipo.init({
 },{ sequelize });
 
 Equipo.asociarCategoria = (Categoria) =>{
-  Equipo.belongsTo(Categoria);
+  Equipo.belongsToMany(Categoria, { through: "Categoria_Equipo", onDelete:'cascade'/*, as:{singular:'categoria',plural:'categorias'}*/ } );
 }
 
 Equipo.asociarPatrocinador = (Patrocinador) =>{
-  Equipo.belongsToMany(Patrocinador, { through: "Equipo_Patrocinador" } );
+  Equipo.belongsToMany(Patrocinador, { through: "Equipo_Patrocinador", onDelete:'cascade',  } );
 }
 
 Equipo.asociarIntegrante = (Integrante) =>{
-  Equipo.hasMany(Integrante)
+  Equipo.hasMany(Integrante,{onDelete:'cascade'})
 }
 
 module.exports = Equipo;

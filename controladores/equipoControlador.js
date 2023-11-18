@@ -1,76 +1,112 @@
-const Equipo = require('../modelos/equipo');
+const seqSync = require('../modelos/asociador');
 
 const index = (req,res) => {
   res.render('index', {equipos:req.session.equipos});
 }
 
-const create_post = (req,res) => {
+const create_post = async (req,res) => {
   const nombre = req.body.nombre;
-  const integrantes = req.body.integrantes || []
-  const catIns = req.body.catIns.map((cat)=>Number(cat))
-  const equipo = new Equipo(nombre,integrantes,catIns);
-  if (req.session.equipos)
-    req.session.equipos.push(equipo);
-  else
-    req.session.equipos = [equipo];
+  const integrantes = req.body.integrantes || [];
+  const catIns = req.body.catIns.map((cat)=>Number(cat));
+  try{
+    const { Equipo, Integrante, Categoria } = await seqSync;
+    const equipo = await Equipo.create({ nombre })
+    const categorias = await Categoria.findAll({where:{ id: catIns }});
+    await equipo.setCategoria(categorias);
+    const integranteEq = integrantes.map((inte) => Object.assign({},inte,{EquipoId:equipo.id}))
+    const integrantesMod = await Integrante.bulkCreate(integranteEq,{ updateOnDuplicate:["nombre"] })
+    res.status(200).json({equipo,integrantes:integrantesMod,catIns:categorias.map((cat)=>cat.id)});
 
-  res.status(200).json({message:"Equipo Creado",equipos:req.session.equipos});
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
 }
 
 const create_get = (req,res) => {
   res.render('ingresarEquipo',{title:"Ingresar Equipo"});
 }
 
-const editar = (req,res) => {
+const editar = async(req,res) => {
   const id = req.params.id;
-  if(id != undefined){
-    req.session.equipos[id] = req.body;
-    req.session.equipos[id].catIns = req.session.equipos[id].catIns.map((cat)=>Number(cat))
-    res.status(200).json({message:"Equipo editado",equipo: req.session.equipos[id]});
+  const nombre = req.body.nombre;
+  const integrantes = req.body.integrantes || [];
+  const catIns = req.body.catIns.map((cat)=>Number(cat));
+  try{
+    const { Equipo, Integrante, Categoria } = await seqSync;
+    const equipo = await Equipo.findByPk(id);
+    const categorias = await Categoria.findAll({where:{ id: catIns }});
+    equipo.nombre = nombre;
+    await equipo.setCategoria(categorias);
+    const integranteEq = integrantes.map((inte) => Object.assign({},inte,{EquipoId:equipo.id}))
+    const integrantesMod = await Integrante.bulkCreate(integranteEq,{ updateOnDuplicate:["nombre"] })
+    await equipo.setIntegrantes(integrantesMod)
+    res.status(200).json({equipo,integrantes:(await equipo.getIntegrantes()),catIns:(await equipo.getCategoria()).map((cat)=>cat.id)});
+
+  }catch(error){
+    console.error(error);
+    res.status(300).json(error);
   }
-  else
-    res.status(400).json({error:"Falta id para modificar el equipo"});
 
 }
 
-const eliminar = (req,res) => {
+const eliminar = async (req,res) => {
   const id = Number(req.body.equipoId);
-  const eqEliminado = req.session.equipos.splice(id,1)[0];
-  if (eqEliminado)
-    res.status(200).json({message:"Equipo eliminado",equipo:eqEliminado});
-  else
-    res.status(400).json({message:"Error el equipo no pudo ser elimindo"});
-}
-
-const mostrarTodos = (req,res) =>{
-  res.status(200).json({equipos:req.session.equipos});
-}
-
-const mostrarPorCategoria = (req,res) => {
-  const categorias = req.session.categorias;
-  const canCat = categorias.length - 1;
-  const equipos = req.session.equipos;
-  var equiposPorCategoria = [];
-  for(let i=0;i<=canCat;i++){
-    equiposPorCategoria.push({
-      nombre:categorias[i].nombre,
-      equipos:equipos.filter((eq)=>eq.catIns.includes(i))
-    });
+  try{
+    const { Equipo } = await seqSync;
+    const equipo = await Equipo.findByPk(id);
+    await equipo.destroy();
+    res.status(200).json({eliminado:true});
   }
-  res.status(200).json({equiposPorCategoria});
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
+
 }
 
-const eliminarCategoriaDeEquipo = (req,res) => {
+const mostrarTodos = async (req,res) =>{
+  try{
+    const { Equipo } = await seqSync;
+    const equipos = await Equipo.findAll();
+    res.status(200).json({equipos});
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
+
+}
+
+
+const mostrarPorCategoria = async (req,res) => {
+  try{
+    const { Categoria, Equipo } = await seqSync;
+    const categorias = await Categoria.findAll({include: Equipo})
+    console.log(await categorias[0].Equipos[0],await categorias[1].Equipos[0]);
+    res.status(200).json({categorias});
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
+}
+
+const eliminarCategoriaDeEquipo = async (req,res) => {
   const eqId = Number(req.body.eqId);
   const catId = Number(req.body.catId);
-  const equipo = req.session.equipos[eqId];
-  const posCat = equipo.catIns.indexOf(catId);
-  if (posCat != -1){
-    const idEliminado = equipo.catIns.splice(posCat,1)[0];
-    res.status(200).json({catEliminado:idEliminado});
+  try{
+    const { Categoria, Equipo } = await seqSync;
+    const equipo = await Equipo.findByPk(eqId);
+    const categoria = await Categoria.findByPk(catId);
+    await equipo.removeCategoria(categoria);
+    res.status(200).json({eliminado:true});
   }
-  else
-    res.status(400).json({message:"No se encontro la categoria inscrita en el equipo"});
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
 }
 
 module.exports = {
