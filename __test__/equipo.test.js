@@ -79,3 +79,11 @@ describe("DELETE /equipos/eliminarCategoriaDeEquipo",()=>{
     expect(response.body.eliminado).toBe(true);
   })
 })
+
+describe("DELETE /equipos/eliminar-integrante-equipo",()=>{
+  it("deberia eliminar la categoria del equipo", async () => {
+    const response = await request(app).delete("/equipos/eliminar-integrante-equipo").type('form').send({cedula:"19475603",equipoId:equipoId2});
+    expect(response.status).toBe(200);
+    expect(response.body.eliminado).toBe(true);
+  })
+})

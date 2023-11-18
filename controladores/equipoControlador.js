@@ -109,6 +109,22 @@ const eliminarCategoriaDeEquipo = async (req,res) => {
   }
 }
 
+const eliminarIntegranteEquipo = async (req,res) => {
+  const cedula = req.body.cedula;
+  const equipoId = Number(req.body.equipoId);
+  try{
+    const { Integrante, Equipo } = await seqSync;
+    const integrante = await Integrante.findByPk(cedula);
+    const equipo = await Equipo.findByPk(equipoId);
+    await equipo.removeIntegrante(integrante);
+    res.status(200).json({eliminado:true});
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
+}
+
 module.exports = {
   index,
   create_post,
@@ -117,5 +133,6 @@ module.exports = {
   eliminar,
   mostrarTodos,
   mostrarPorCategoria,
-  eliminarCategoriaDeEquipo
+  eliminarCategoriaDeEquipo,
+  eliminarIntegranteEquipo
 } 
