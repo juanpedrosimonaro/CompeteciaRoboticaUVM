@@ -1,26 +1,36 @@
-const Patrocinador = require('../modelos/patrocinador');
+const seqSync = require('../modelos/asociador');
 
 const index = (req,res) => {
   res.render('index', {patrocinadores:req.session.patrocinadores});
 }
 
-const create_post = (req,res) => {
+const create_post = async (req,res) => {
   const nombre = req.body.nombre;
-  const patrocinador = new Patrocinador(nombre);
-  if (req.session.patrocinadores)
-    req.session.patrocinadores.push(patrocinador);
-  else
-    req.session.patrocinadores = [patrocinador];
-  res.status(200).json({message:"Patrocinador Creado",patrocinadores:req.session.patrocinadores});
-  res.render('ingresarPatrocinador',{title:"Ingresar Patrocinador"});
+  const equipos = req.body.equipos || [];
+  try{
+    const { Equipo, Patrocinador } = await seqSync;
+    const patrocinador = await Patrocinador.create({ nombre });
+    await patrocinador.setEquipos(equipos);
+    res.status(200).json({patrocinador,equipos:(await patrocinador.getEquipos())});
+  }catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
 }
 
 const create_get = (req,res) => {
   res.render('ingresarPatrocinador',{title:"Ingresar Patrocinador"});
 }
 
-const mostrarTodos = (req,res) =>{
-  res.status(200).json({patrocinadores:req.session.patrocinadores});
+const mostrarTodos = async (req,res) =>{
+  try{
+    const { Patrocinador } = await seqSync;
+    const patrocinadores = await Patrocinador.findAll();
+    res.status(200).json({ patrocinadores });
+  }catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
 }
 
 module.exports = {
