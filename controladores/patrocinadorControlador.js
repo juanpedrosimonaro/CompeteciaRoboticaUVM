@@ -33,9 +33,22 @@ const mostrarTodos = async (req,res) =>{
   }
 }
 
+const mostrarPorEquipo = async (req,res) =>{
+  try{
+    const { Equipo, Patrocinador } = await seqSync;
+    const equipos = await Equipo.findAll({ include: Patrocinador });
+    res.status(200).json({equipos});
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
+}
+
 module.exports = {
   index,
   create_post,
   create_get,
-  mostrarTodos
+  mostrarTodos,
+  mostrarPorEquipo
 } 

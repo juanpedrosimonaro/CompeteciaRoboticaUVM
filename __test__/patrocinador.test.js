@@ -1,10 +1,11 @@
 const request = require("supertest");
 const app = require("../index");
-const agent = request.agent(app);
+
 var modalidadId;
 var categoriaId;
 var equipoId;
 var patrocinadorId;
+var equipoId2;
 
 afterAll(done=>{
   app.close();
@@ -22,7 +23,7 @@ describe("POST /patrocinadores/ingresar-patrocinador",()=>{
     const responseEq = await request(app).post("/equipos/ingresar-equipo").type('form').send({nombre:"Automatas", integrantes:[], catIns:[categoriaId]});
     expect(responseEq.status).toBe(200);
     equipoId = responseEq.body.equipo.id;
-    const response = await agent.post("/patrocinadores/ingresar-patrocinador").type('form').send({nombre:"Coca-Cola",equipos:[equipoId]});
+    const response = await request(app).post("/patrocinadores/ingresar-patrocinador").type('form').send({nombre:"Coca-Cola",equipos:[equipoId]});
     expect(response.status).toBe(200);
     patrocinadorId = response.body.patrocinador.id;
     expect(response.body.patrocinador).toEqual(expect.objectContaining({nombre:"Coca-Cola"}));
@@ -32,9 +33,19 @@ describe("POST /patrocinadores/ingresar-patrocinador",()=>{
 
 describe("GET /patrocinadores/patrocinadores",()=>{
   it("deberia retornar de forma exitosa todos los patrocinadores", async () => {
-    const response1 = await agent.post("/patrocinadores/ingresar-patrocinador").type('form').send({nombre:"Intel",equipos:[equipoId]});
+    const responseEq = await request(app).post("/equipos/ingresar-equipo").type('form').send({nombre:"Guerreros", integrantes:[], catIns:[categoriaId]});
+    expect(responseEq.status).toBe(200);
+    equipoId2 = responseEq.body.equipo.id;
+    const response1 = await request(app).post("/patrocinadores/ingresar-patrocinador").type('form').send({nombre:"Intel",equipos:[equipoId2]});
     expect(response1.status).toBe(200);
-    const response = await agent.get("/patrocinadores/patrocinadores");
+    const response = await request(app).get("/patrocinadores/patrocinadores");
     expect(response.body.patrocinadores).toEqual(expect.arrayContaining([expect.objectContaining({nombre:"Coca-Cola"}),expect.objectContaining({nombre:"Intel"})]))
+  })
+})
+
+describe("GET /patrocinadores/patrocinadoresPorEquipo",()=>{
+  it("deberia retornar de forma exitosa todos los patrocinadores organizados por equipos", async () => {
+    const response = await request(app).get("/patrocinadores/patrocinadoresPorEquipo");
+    expect(response.body.equipos).toEqual(expect.arrayContaining([expect.objectContaining({nombre:"Automatas",Patrocinadors:[expect.objectContaining({nombre:"Coca-Cola"})]}),expect.objectContaining({nombre:"Guerreros",Patrocinadors:[expect.objectContaining({nombre:"Intel"})]})]))
   })
 })
