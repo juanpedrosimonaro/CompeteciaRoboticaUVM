@@ -81,6 +81,7 @@ DBDIALECT=postgres
 
 ## Rutas Extra
 |Ruta|Método|
+|---|---|
 |/modalidades/editar-modalidad/|PUT|
 |/patrocinadores/patrocinadoresPorEquipo|GET|
 |/equipos/eliminar-integrante-equipo|DELETE|
