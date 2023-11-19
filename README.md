@@ -75,7 +75,7 @@ DBUSERNAME=wcqtvtda
 DBPASSWORD=k658rbHNd-1JF53HycESKGfaiLT420iE
 DBHOST=chunee.db.elephantsql.com
 DBDIALECT=postgres
-``
+```
 
 Ésta configura Sequelize para que se pueda conectar con [ElephantSQL](elephantsql.com) el cual usa una base de datos Postgres
 
