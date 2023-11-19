@@ -63,3 +63,24 @@ Para hacer las pruebas se usó la librería de pruebas **Jest** y **Supertest**.
 ```bash
 npm run test
 ```
+## Actualización Sequelize ORM (BD Relacional)
+
+Gracias al paquete Sequelize se puede configurar el proyecto para que se pueda almacenar en casi cualquier Sistema de Gestión de Base de Datos Relacional
+
+Este Proyecto fue configurado para colocar en un archivo .env los secretos, un ejemplo funcional .env es:
+
+```
+DATABASENAME=wcqtvtda
+DBUSERNAME=wcqtvtda
+DBPASSWORD=k658rbHNd-1JF53HycESKGfaiLT420iE
+DBHOST=chunee.db.elephantsql.com
+DBDIALECT=postgres
+``
+
+Ésta configura Sequelize para que se pueda conectar con [ElephantSQL](elephantsql.com) el cual usa una base de datos Postgres
+
+## Rutas Extra
+|Ruta|Método|
+|/modalidades/editar-modalidad/|PUT|
+|/patrocinadores/patrocinadoresPorEquipo|GET|
+|/equipos/eliminar-integrante-equipo|DELETE|
