@@ -77,7 +77,7 @@ DBHOST=chunee.db.elephantsql.com
 DBDIALECT=postgres
 ```
 
-Ésta configura Sequelize para que se pueda conectar con [ElephantSQL](elephantsql.com) el cual usa una base de datos Postgres
+Ésta configura Sequelize para que se pueda conectar con [ElephantSQL](https://www.elephantsql.com) el cual usa una base de datos Postgres
 
 ## Rutas Extra
 |Ruta|Método|

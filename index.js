@@ -13,15 +13,10 @@ app.set('view engine', 'ejs');
 // middleware
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
-// app.use(session({
-//   secret: 'millavesecreta',
-//   resave: false,
-//   saveUnitialized: true
-// }));
 
 // rutas
 app.get('/', (req,res)=>{
-  res.render('index', {});
+  res.render('index', {title:"Pagina Principal"});
 })
 app.use('/modalidades',modalidadRutas);
 app.use('/categorias',categoriaRutas);
