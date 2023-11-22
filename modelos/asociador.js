@@ -19,7 +19,7 @@ Patrocinador.asociarEquipo(Equipo);
 
 Integrante.asociarEquipo(Equipo);
 
-module.exports = sequelize.sync({ force: true }).then(()=>
+module.exports = sequelize.sync().then(()=>
 ({
     Modalidad,
     Categoria,

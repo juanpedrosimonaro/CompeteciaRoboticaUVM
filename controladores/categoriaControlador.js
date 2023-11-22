@@ -5,7 +5,7 @@ const index = async (req,res) => {
     const { Categoria, Modalidad } = await seqSync;
     const categorias = await Categoria.findAll({include: Modalidad});
     const modalidades = await Modalidad.findAll();
-    res.render('gestionCategoria', {categorias,modalidades,title:"Gestion Categoria"})
+    res.render('gestionCategorias', {categorias,modalidades,title:"Gestion Categoria"})
   }
   catch(error){
     console.error(error);

@@ -1,20 +1,35 @@
 const seqSync = require('../modelos/asociador');
 
-const index = (req,res) => {
-  res.render('index', {equipos:req.session.equipos});
+const index = async (req,res) => {
+  try{
+    const { Equipo } = await seqSync;
+    const equipos = await Equipo.findAll();
+    res.render('gestionEquipos',{equipos,title:"Gestion de Equipos"})
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
+
 }
 
 const create_post = async (req,res) => {
   const nombre = req.body.nombre;
-  const integrantes = req.body.integrantes || [];
-  const catIns = req.body.catIns.map((cat)=>Number(cat));
   try{
     const { Equipo, Integrante, Categoria } = await seqSync;
-    const equipo = await Equipo.create({ nombre })
-    const categorias = await Categoria.findAll({where:{ id: catIns }});
-    await equipo.setCategoria(categorias);
-    const integranteEq = integrantes.map((inte) => Object.assign({},inte,{EquipoId:equipo.id}))
-    const integrantesMod = await Integrante.bulkCreate(integranteEq,{ updateOnDuplicate:["nombre"] })
+    const equipo = await Equipo.create({ nombre });
+    var categorias = [];
+    var integrantesMod = []; 
+    if(req.body.catIns){
+      const catIns = req.body.catIns.map((cat)=>Number(cat));
+      categorias = await Categoria.findAll({where:{ id: catIns }});
+      await equipo.setCategoria(categorias);
+    }
+    if(req.body.integrantes){
+      const integrantes = req.body.integrantes;
+      const integranteEq = integrantes.map((inte) => Object.assign({},inte,{EquipoId:equipo.id}))
+      integrantesMod = await Integrante.bulkCreate(integranteEq,{ updateOnDuplicate:["nombre"] })
+    }
     res.status(200).json({equipo,integrantes:integrantesMod,catIns:categorias.map((cat)=>cat.id)});
 
   }
@@ -31,17 +46,24 @@ const create_get = (req,res) => {
 const editar = async(req,res) => {
   const id = req.params.id;
   const nombre = req.body.nombre;
-  const integrantes = req.body.integrantes || [];
-  const catIns = req.body.catIns.map((cat)=>Number(cat));
+  // const integrantes = req.body.integrantes;
+  // const catIns = req.body.catIns.map((cat)=>Number(cat));
   try{
     const { Equipo, Integrante, Categoria } = await seqSync;
     const equipo = await Equipo.findByPk(id);
-    const categorias = await Categoria.findAll({where:{ id: catIns }});
     equipo.nombre = nombre;
-    await equipo.setCategoria(categorias);
-    const integranteEq = integrantes.map((inte) => Object.assign({},inte,{EquipoId:equipo.id}))
-    const integrantesMod = await Integrante.bulkCreate(integranteEq,{ updateOnDuplicate:["nombre"] })
-    await equipo.setIntegrantes(integrantesMod)
+    equipo.save();
+    if(req.body.catIns){
+      const catIns = req.body.catIns.map((cat)=>Number(cat));
+      const categorias = await Categoria.findAll({where:{ id: catIns }});
+      await equipo.setCategoria(categorias);
+    }
+    if(req.body.integrantes){
+      const integrantes = req.body.integrantes;
+      const integranteEq = integrantes.map((inte) => Object.assign({},inte,{EquipoId:equipo.id}))
+      const integrantesMod = await Integrante.bulkCreate(integranteEq,{ updateOnDuplicate:["nombre"] })
+      await equipo.setIntegrantes(integrantesMod)
+    }
     res.status(200).json({equipo,integrantes:(await equipo.getIntegrantes()),catIns:(await equipo.getCategoria()).map((cat)=>cat.id)});
 
   }catch(error){
@@ -66,6 +88,21 @@ const eliminar = async (req,res) => {
 
 }
 
+const mostrar = async(req,res) => {
+  const id = Number(req.params.id)
+  try{
+    const { Equipo, Integrante, Categoria } = await seqSync;
+    const equipo = await Equipo.findByPk(id,{include:[Integrante, Categoria]});
+    if(equipo)
+    res.render('gestionEquipo',{equipo,title:("Gestion de Equipo")});
+    else throw new Error("Equipo no encontrado")
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json(error)
+  }
+}
+
 const mostrarTodos = async (req,res) =>{
   try{
     const { Equipo } = await seqSync;
@@ -86,6 +123,23 @@ const mostrarPorCategoria = async (req,res) => {
     const categorias = await Categoria.findAll({include: Equipo})
     console.log(await categorias[0].Equipos[0],await categorias[1].Equipos[0]);
     res.status(200).json({categorias});
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
+}
+
+const agregarIntegranteEquipo = async(req,res) =>{
+  const cedula = req.body.cedula;
+  const nombre = req.body.nombre;
+  const equipoId = Number(req.body.equipoId);
+  try{
+    const { Integrante, Equipo } = await seqSync;
+    const integrante = await Integrante.create({cedula,nombre});
+    const equipo = await Equipo.findByPk(equipoId);
+    const integranteEq = await equipo.addIntegrante(integrante);
+    res.status(200).json({integrante:integranteEq});
   }
   catch(error){
     console.error(error);
@@ -131,8 +185,10 @@ module.exports = {
   create_get,
   editar,
   eliminar,
+  mostrar,
   mostrarTodos,
   mostrarPorCategoria,
   eliminarCategoriaDeEquipo,
-  eliminarIntegranteEquipo
+  eliminarIntegranteEquipo,
+  agregarIntegranteEquipo
 } 
