@@ -9,15 +9,17 @@
         const fila = e.target.parentElement.parentElement.parentElement;
         const filaArray = [...fila.children];
         filaArray.pop();
-        const modalidad = {};
+        const categoria = {};
         const id = fila.dataset.id;
         filaArray.forEach((celda) => {
-          modalidad[celda.dataset.name] = celda.innerText;
+          celda.dataset.name == "modalidadId" ?
+            categoria[celda.dataset.name] = celda.children[0].value :
+            categoria[celda.dataset.name] = celda.innerText;
         })
-        console.log(modalidad);
-        fetch(`/modalidades/editar-modalidad/${id}`, {
+        console.log(categoria);
+        fetch(`/categorias/editar-categoria/${id}`, {
           method: 'PUT',
-          body: new URLSearchParams(modalidad) //TODO Checkear por alternativas
+          body: new URLSearchParams(categoria)
         }).then((response) => {
           if (response.ok) {
             location.reload();
@@ -29,9 +31,10 @@
         var fila = e.target.parentElement.parentElement.parentElement;
         var filaArray = [...fila.children];
         const id = fila.dataset.id;
-        fetch(`/modalidades/eliminar-modalidad/`, {
+        console.log(id);
+        fetch(`/categorias/eliminar-categoria/`, {
           method: 'DELETE',
-          body: new URLSearchParams({id}) //TODO Checkear por alternativas
+          body: new URLSearchParams({categoriaId: id})
         }).then((response) => {
           console.log(response)
           if (response.ok) {
@@ -40,20 +43,22 @@
         }).catch((error) => alert(error))
       }));
 
-      document.getElementById("nuevaModalidad").addEventListener("click", (e) => {
+      document.getElementById("nuevaCategoria").addEventListener("click", (e) => {
         e.preventDefault();
         const fila = e.target.parentElement.parentElement;
         const filaArray = [...fila.children];
         filaArray.pop();
-        const modalidad = {};
+        const categoria = {};
         const id = fila.dataset.id;
         filaArray.forEach((celda) => {
-          modalidad[celda.dataset.name] = celda.innerText;
+          celda.dataset.name == "modalidadId" ?
+            categoria[celda.dataset.name] = celda.children[0].value :
+            categoria[celda.dataset.name] = celda.innerText;
         })
-        console.log(modalidad)
-        fetch(`/modalidades/ingresar-modalidad/`, {
+        console.log(categoria)
+        fetch(`/categorias/ingresar-categoria/`, {
           method: 'POST',
-          body: new URLSearchParams(modalidad) //TODO Checkear por alternativas
+          body: new URLSearchParams(categoria) //TODO Checkear por alternativas
         }).then((response) => {
           if (response.ok) {
             location.reload();
@@ -73,16 +78,29 @@
         <tr>
           <th>ID</th>
           <th>Nombre</th>
+          <th>Modalidad</th>
           <th>Operaciones</th>
         </tr>
 
-        <% modalidades.forEach(modalidad=> { %>
-          <tr data-id="<%= modalidad.id %>">
+        <% categorias.forEach(categoria=> { %>
+          <tr data-id="<%= categoria.id %>">
             <td data-name="idNew" contenteditable>
-              <%= modalidad.id %>
+              <%= categoria.id %>
             </td>
             <td data-name="nombre" contenteditable>
-              <%= modalidad.nombre %>
+              <%= categoria.nombre %>
+            </td>
+            <td data-name="modalidadId">
+              <select name="modalidad" id="modalidad">
+                <% if(!modalidades.some(mod=>mod.id == categoria.Modalidad.id)) { %>
+                  <option value="0" disabled selected hidden>Seleccione una modalidad</option>
+                  <% } %>
+                    <% modalidades.forEach(modalidad=>{ %>
+                      <option value="<%= modalidad.id %>" <%=modalidad.id==categoria.Modalidad.id ? "selected" : "" %> >
+                        <%= modalidad.nombre %>
+                      </option>
+                      <% }) %>
+              </select>
             </td>
             <td>
               <div class="d-flex flex-row justify-content-around align-items-center">
@@ -93,11 +111,21 @@
           </tr>
           <% }) %>
 
-            <tr data-id="<%= modalidades.length + 1 %>">
+            <tr data-id="<%= categorias.length + 1 %>">
               <td>
               </td>
               <td data-name="nombre" contenteditable></td>
-              <td><button id="nuevaModalidad">Nueva Modalidad</button></td>
+              <td data-name="modalidadId">
+                <select name="modalidadIdNuevo" id="modalidadIdNuevo">
+                  <option value="0" disabled selected hidden>Seleccione una modalidad</option>
+                  <% modalidades.forEach(modalidad=>{ %>
+                    <option value="<%= modalidad.id %>">
+                      <%= modalidad.nombre %>
+                    </option>
+                    <% }) %>
+                </select>
+              </td>
+              <td><button id="nuevaCategoria">Nueva Categoria</button></td>
             </tr>
 
       </table>

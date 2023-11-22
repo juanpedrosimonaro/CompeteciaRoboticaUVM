@@ -1,7 +1,16 @@
 const seqSync = require('../modelos/asociador');
 
-const index = (req,res) => {
-  res.render('index', {categorias:req.session.categorias});
+const index = async (req,res) => {
+  try{
+    const { Categoria, Modalidad } = await seqSync;
+    const categorias = await Categoria.findAll({include: Modalidad});
+    const modalidades = await Modalidad.findAll();
+    res.render('gestionCategoria', {categorias,modalidades,title:"Gestion Categoria"})
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json({ error })
+  }
 }
 
 const create_post = async (req,res) => {
