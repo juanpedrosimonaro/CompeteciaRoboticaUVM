@@ -3,7 +3,7 @@
   <script>
 
     document.addEventListener("DOMContentLoaded", function (event) {
-      // TODO Rutas y controlador
+
       document.querySelectorAll(".btnActInt").forEach(btnAct => btnAct.addEventListener("click", (e) => {
         e.preventDefault();
         const fila = e.target.parentElement.parentElement.parentElement;
@@ -25,14 +25,16 @@
           }
         }).catch((error) => alert(error))
       }));
-      // TODO Rutas y controlador
+
       document.querySelectorAll(".btnEliInt").forEach(btnEli => btnEli.addEventListener("click", (e) => {
         var fila = e.target.parentElement.parentElement.parentElement;
         var filaArray = [...fila.children];
-        const id = fila.dataset.id;
-        fetch(`/equipos/eliminar-integrante/`, {
+        const cedula = fila.dataset.cedula;
+        const equipoId = fila.dataset.equipoid;
+        console.log(cedula, equipoId)
+        fetch(`/equipos/eliminar-integrante-equipo/`, {
           method: 'DELETE',
-          body: new URLSearchParams({id})
+          body: new URLSearchParams({cedula, equipoId})
         }).then((response) => {
           console.log(response)
           if (response.ok) {
@@ -63,34 +65,13 @@
         }).catch((error) => alert(error))
       });
 
-      document.querySelectorAll(".btnActCat").forEach(btnAct => btnAct.addEventListener("click", (e) => {
-        e.preventDefault();
-        const fila = e.target.parentElement.parentElement.parentElement;
-        const filaArray = [...fila.children];
-        filaArray.pop();
-        const categoria = {};
-        const id = fila.dataset.id;
-        filaArray.forEach((celda) => {
-          categoria[celda.dataset.name] = celda.innerText;
-        })
-        console.log(categoria);
-        fetch(`/equipos/editar-categoria/${id}`, {
-          method: 'PUT',
-          body: new URLSearchParams(categoria)
-        }).then((response) => {
-          if (response.ok) {
-            location.reload();
-          }
-        }).catch((error) => alert(error))
-      }));
-
       document.querySelectorAll(".btnEliCat").forEach(btnEli => btnEli.addEventListener("click", (e) => {
         var fila = e.target.parentElement.parentElement.parentElement;
-        var filaArray = [...fila.children];
-        const id = fila.dataset.id;
+        const catId = fila.dataset.id;
+        const eqId = fila.dataset.equipoid;
         fetch(`/equipos/eliminar-categoria/`, {
           method: 'DELETE',
-          body: new URLSearchParams({id})
+          body: new URLSearchParams({catId, eqId})
         }).then((response) => {
           console.log(response)
           if (response.ok) {
@@ -105,9 +86,12 @@
         const filaArray = [...fila.children];
         filaArray.pop();
         const categoria = {};
-        const id = fila.dataset.id;
+        categoria.id = fila.dataset.id;
+        categoria.equipoId = fila.dataset.equipoid;
         filaArray.forEach((celda) => {
-          categoria[celda.dataset.name] = celda.innerText;
+          celda.dataset.name == "categoriaId" ?
+            categoria[celda.dataset.name] = celda.children[0].value :
+            categoria[celda.dataset.name] = celda.innerText;
         })
         console.log(categoria)
         fetch(`/equipos/ingresar-categoria/`, {
@@ -139,7 +123,7 @@
         </tr>
 
         <% equipo.Integrantes.forEach(integrante=> { %>
-          <tr data-id="<%= integrante.id %>" data-equipoid="<%= equipo.id %>">
+          <tr data-cedula="<%= integrante.cedula %>" data-equipoid="<%= equipo.id %>">
             <td data-name="cedula" contenteditable>
               <%= integrante.cedula %>
             </td>
@@ -155,7 +139,7 @@
           </tr>
           <% }) %>
 
-            <tr data-id="<%= equipo.Integrantes.length + 1 %>" data-equipoid="<%= equipo.id %>">
+            <tr data-cedula="<%= equipo.Integrantes.length + 1 %>" data-equipoid="<%= equipo.id %>">
               <td data-name="cedula" contenteditable>
               </td>
               <td data-name="nombre" contenteditable></td>
@@ -174,7 +158,7 @@
         </tr>
 
         <% equipo.Categoria.forEach(categoria=> { %>
-          <tr data-id="<%= categoria.id %>">
+          <tr data-id="<%= categoria.id %>" data-equipoid="<%= equipo.id %>">
             <td data-name="idNew" contenteditable>
               <%= categoria.id %>
             </td>
@@ -183,17 +167,26 @@
             </td>
             <td>
               <div class="d-flex flex-row justify-content-around align-items-center">
-                <button class="btnActCat">Actualizar</button>
                 <button class="btnEliCat">Eliminar</button>
               </div>
             </td>
           </tr>
           <% }) %>
 
-            <tr data-id="<%= equipo.Integrantes.length + 1 %>">
+            <tr data-id="<%= equipo.Integrantes.length + 1 %>" data-equipoid="<%= equipo.id %>">
               <td>
               </td>
-              <td data-name="nombre" contenteditable></td>
+              <td data-name="categoriaId">
+                <select name="categoria" id="categoriaIdNuevo">
+                  <option value="0" disabled selected hidden>Seleccione una Categoria</option>
+                  <%# (categorias.filter(cat=>equipo.Categoria.some(eqCat=>cat.id == eqCat.id))).forEach(categoria=>{%>
+                    <% categorias.forEach(categoria=>{%>
+                      <option value="<%= categoria.id %>">
+                        <%= categoria.nombre %>
+                      </option>
+                      <% }) %>
+                </select>
+              </td>
               <td><button id="nuevaCategoria">Inscribir Categoria</button></td>
             </tr>
 

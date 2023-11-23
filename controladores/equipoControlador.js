@@ -92,9 +92,10 @@ const mostrar = async(req,res) => {
   const id = Number(req.params.id)
   try{
     const { Equipo, Integrante, Categoria } = await seqSync;
+    const categorias = await Categoria.findAll()
     const equipo = await Equipo.findByPk(id,{include:[Integrante, Categoria]});
     if(equipo)
-    res.render('gestionEquipo',{equipo,title:("Gestion de Equipo")});
+    res.render('gestionEquipo',{equipo,categorias,title:("Gestion de Equipo")});
     else throw new Error("Equipo no encontrado")
   }
   catch(error){
@@ -147,6 +148,41 @@ const agregarIntegranteEquipo = async(req,res) =>{
   }
 }
 
+const editarIntegranteEquipo = async(req,res) =>{
+  const cedula = req.body.cedula;
+  const nombre = req.body.nombre;
+  const equipoId = Number(req.body.equipoId);
+  try{
+    const { Integrante, Equipo } = await seqSync;
+    const integrante = await Integrante.findByPk(cedula);
+    // const equipo = await Equipo.findByPk(equipoId);
+    integrante.nombre = nombre;
+    await integrante.save();
+    res.status(200).json({integrante});
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
+}
+
+const agregarCategoriaEquipo = async (req,res) => {
+  const id = Number(req.body.categoriaId);
+  const nombre = req.body.nombre;
+  const equipoId = Number(req.body.equipoId);
+  try{
+    const { Categoria, Equipo } = await seqSync;
+    const categoria = await Categoria.findByPk(id)
+    const equipo = await Equipo.findByPk(equipoId);
+    await equipo.addCategoria(categoria)
+    res.status(200).json({categoria,equipo});
+  }
+  catch(error){
+    console.error(error);
+    res.status(300).json(error);
+  }
+}
+
 const eliminarCategoriaDeEquipo = async (req,res) => {
   const eqId = Number(req.body.eqId);
   const catId = Number(req.body.catId);
@@ -190,5 +226,7 @@ module.exports = {
   mostrarPorCategoria,
   eliminarCategoriaDeEquipo,
   eliminarIntegranteEquipo,
-  agregarIntegranteEquipo
+  agregarIntegranteEquipo,
+  editarIntegranteEquipo,
+  agregarCategoriaEquipo
 } 

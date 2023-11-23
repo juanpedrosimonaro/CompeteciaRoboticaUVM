@@ -21,7 +21,8 @@ const loguearUsuario = async (req,res) => {
           } else {
             console.log("Usuario iniciado");
             res.cookie('token', token, { httpOnly: true });
-            res.render('index',{title:"Pagina principal"})
+            res.redirect('/');
+            // res.render('index',{title:"Pagina principal"})
           }
         })
       }
@@ -51,7 +52,8 @@ const registrarUsuario = async (req,res) => {
             res.sendStatus(500);
           } else {
             res.cookie('token', token, { httpOnly: true });
-            res.render('index',{title:"Pagina principal"})
+            // res.render('index',{title:"Pagina principal"})
+            res.redirect('/')
           }
         })
       }
