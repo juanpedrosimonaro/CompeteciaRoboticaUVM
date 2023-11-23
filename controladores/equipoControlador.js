@@ -122,8 +122,8 @@ const mostrarPorCategoria = async (req,res) => {
   try{
     const { Categoria, Equipo } = await seqSync;
     const categorias = await Categoria.findAll({include: Equipo})
-    console.log(await categorias[0].Equipos[0],await categorias[1].Equipos[0]);
-    res.status(200).json({categorias});
+    // res.status(200).json({categorias});
+    res.render('mostrarEquiposPorCategoria',{categorias,title:"Mostrar Equipos por Categoria"})
   }
   catch(error){
     console.error(error);

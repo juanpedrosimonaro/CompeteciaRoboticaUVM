@@ -1,0 +1,30 @@
+<html lang="en">
+<%- include("./parciales/cabecera.ejs") %>
+
+  <body>
+    <%- include("./parciales/barra.ejs") %>
+      <% equipos.forEach((equipo)=>{ %>
+        <h1>Equipo: <%= equipo.nombre %>
+        </h1>
+        <table style="width: 100%; table-layout:fixed; overflow-wrap:break-word">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+          </tr>
+          <% equipo.Patrocinadors.forEach((patrocinador)=>{%>
+            <tr>
+              <td>
+                <%= patrocinador.id%>
+              </td>
+              <td>
+                <%= patrocinador.nombre%>
+              </td>
+            </tr>
+            <% }) %>
+        </table>
+        <% }) %>
+
+          <%- include("./parciales/fondo.ejs") %>
+  </body>
+
+</html>

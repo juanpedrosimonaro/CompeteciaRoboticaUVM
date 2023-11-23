@@ -65,7 +65,8 @@ const mostrarPorEquipo = async (req,res) =>{
   try{
     const { Equipo, Patrocinador } = await seqSync;
     const equipos = await Equipo.findAll({ include: Patrocinador });
-    res.status(200).json({equipos});
+    // res.status(200).json({equipos});
+    res.render('mostrarPatrocinadoresPorEquipo',{equipos,title:"Mostrar Patrocinadores por Equipo"})
   }
   catch(error){
     console.error(error);

@@ -1,0 +1,30 @@
+<html lang="en">
+<%- include("./parciales/cabecera.ejs") %>
+
+  <body>
+    <%- include("./parciales/barra.ejs") %>
+      <% categorias.forEach((categoria)=>{ %>
+        <h1>Categoria: <%= categoria.nombre %>
+        </h1>
+        <table style="width: 100%; table-layout:fixed; overflow-wrap:break-word">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+          </tr>
+          <% categoria.Equipos.forEach((equipo)=>{%>
+            <tr>
+              <td>
+                <%= equipo.id%>
+              </td>
+              <td>
+                <%= equipo.nombre%>
+              </td>
+            </tr>
+            <% }) %>
+        </table>
+        <% }) %>
+
+          <%- include("./parciales/fondo.ejs") %>
+  </body>
+
+</html>

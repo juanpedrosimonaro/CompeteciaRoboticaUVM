@@ -13,5 +13,6 @@ router.put('/editar-patrocinador/:id',patrocinadorControlador.editar);
 router.delete('/eliminar-patrocinador/',patrocinadorControlador.eliminar);
 router.post('/patrocinar-equipo',patrocinadorControlador.patrocinarEquipo);
 router.delete('/eliminar-patrocinio',patrocinadorControlador.eliminarPatrocinioEquipo)
+router.get('/pratrocinadoresPorEquipo',patrocinadorControlador.mostrarPorEquipo)
 
 module.exports = router;
