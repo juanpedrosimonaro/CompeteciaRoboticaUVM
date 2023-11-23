@@ -1,0 +1,101 @@
+<html lang="en">
+<%- include("./parciales/cabecera.ejs") %>
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+
+      document.querySelectorAll(".btnEli").forEach(btnEli => btnEli.addEventListener("click", (e) => {
+        var fila = e.target.parentElement.parentElement.parentElement;
+        var filaArray = [...fila.children];
+        const eqId = fila.dataset.id;
+        const pId = fila.dataset.patrocinadorid
+        fetch(`/patrocinadores/eliminar-patrocinio/`, {
+          method: 'DELETE',
+          body: new URLSearchParams({pId, eqId})
+        }).then((response) => {
+          console.log(response)
+          if (response.ok) {
+            location.reload();
+          }
+        }).catch((error) => alert(error))
+      }));
+
+      document.getElementById("nuevoPatrocinio").addEventListener("click", (e) => {
+        e.preventDefault();
+        const fila = e.target.parentElement.parentElement;
+        const filaArray = [...fila.children];
+        filaArray.pop();
+        const patrocinador = {};
+        patrocinador.pId = fila.dataset.patrocinadorid
+        filaArray.forEach((celda) => {
+          celda.dataset.name == "eqId" ?
+            patrocinador[celda.dataset.name] = celda.children[0].value :
+            patrocinador[celda.dataset.name] = celda.innerText;
+        })
+        console.log(patrocinador)
+        fetch(`/patrocinadores/patrocinar-equipo/`, {
+          method: 'POST',
+          body: new URLSearchParams(patrocinador)
+        }).then((response) => {
+          if (response.ok) {
+            location.reload();
+          }
+        }).catch((error) => alert(error))
+      });
+
+    })
+
+
+
+  </script>
+
+  <body>
+    <%- include("./parciales/barra.ejs") %>
+      <h1>Gestionar Patrocinador: <%= patrocinador.nombre %>
+      </h1>
+      <table style="width: 100%; table-layout:fixed; overflow-wrap:break-word">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Operaciones</th>
+        </tr>
+
+        <% patrocinador.Equipos.forEach(equipo=> { %>
+          <tr data-id="<%= equipo.id %>" data-patrocinadorid="<%= patrocinador.id %>">
+            <td data-name="idNew" contenteditable>
+              <%= equipo.id %>
+            </td>
+            <td data-name="nombre" contenteditable>
+              <%= equipo.nombre %>
+            </td>
+
+            <td>
+              <div class="d-flex flex-row justify-content-around align-items-center">
+                <button class="btnEli">Eliminar</button>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+
+            <tr data-id="<%= equipos.length + 1 %>" data-patrocinadorid="<%= patrocinador.id %>">
+              <td>
+              </td>
+              <td data-name="eqId">
+                <select name="equipoIdNuevo" id="equipoIdNuevo">
+                  <option value="0" disabled selected hidden>Seleccione una equipo</option>
+                  <% equipos.forEach(equipo=>{ %>
+                    <option value="<%= equipo.id %>">
+                      <%= equipo.nombre %>
+                    </option>
+                    <% }) %>
+                </select>
+              </td>
+              <td><button id="nuevoPatrocinio">Nuevo Patrocinio</button></td>
+            </tr>
+
+      </table>
+
+      <%- include("./parciales/fondo.ejs") %>
+  </body>
+
+</html>
