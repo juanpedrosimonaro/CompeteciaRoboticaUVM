@@ -3,6 +3,7 @@ const Categoria = require("./categoria");
 const Equipo = require("./equipo");
 const Patrocinador = require("./patrocinador");
 const Integrante = require("./integrante");
+const Usuario = require("./usuario")
 
 const sequelize = require("../db")
 
@@ -25,6 +26,7 @@ module.exports = sequelize.sync().then(()=>
     Categoria,
     Equipo,
     Patrocinador,
-    Integrante
+    Integrante,
+    Usuario
 })
 );
