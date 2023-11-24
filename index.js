@@ -27,7 +27,7 @@ const verificarToken = (req, res, next) => {
       console.log
       return res.redirect('/auth/login');
     }
-    req.usuario = decoded;
+    req.usuario = decoded.usuario;
     next();
   });
 }
@@ -46,10 +46,10 @@ app.get('/',verificarToken, (req,res)=>{
   res.render('index', {title:"Pagina Principal"});
 })
 
-app.use('/modalidades',verificarToken,modalidadRutas);
-app.use('/categorias',verificarToken,categoriaRutas);
-app.use('/equipos',verificarToken,equipoRutas);
-app.use('/patrocinadores',verificarToken,patrocinadorRutas);
+app.use('/modalidades',verificarToken, verificarAdministrador, modalidadRutas);
+app.use('/categorias',verificarToken, verificarAdministrador, categoriaRutas);
+app.use('/equipos',verificarToken, equipoRutas);
+app.use('/patrocinadores',verificarToken, patrocinadorRutas);
 app.use('/auth',authRutas);
 
 const server = app.listen(3000,()=>{
